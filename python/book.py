@@ -24,37 +24,69 @@ class SQL:
         print(f"Se elimino {record_id} desde {table_name}")
 
 
-class Book:
-    """Aquí implementar la clase"""
-
-    def __init__(self, sql, title, author):
-        self.sql = sql
-        self.id = None
-        self.title = title
-        self.author = author
+def __init__(self, sql, title, author):
+    # inicializar los atributos
+    self.sql = sql
+    self.id = None
+    self.title = title
+    self.author = author
 
     def save(self):
-        if self.id is None:
-            self.sql.create(table_name="books", title=self.title, author=self.author)
-            self.id = self.sql.last_inserted_id()
-        else:
-            self.sql.update(
-                "books", record_id=self.id, title=self.title, author=self.author
-            )
+        try:
+            if self.id is None:
+                # Validar datos antes de interactuar con la base de datos
+                if not self.title or not self.author:
+                    raise ValueError(
+                        "Título y autor son obligatorios para guardar un libro."
+                    )
+
+                self.sql.create(
+                    table_name="books", title=self.title, author=self.author
+                )
+                self.id = self.sql.last_inserted_id()
+            else:
+                self.sql.update(
+                    "books", record_id=self.id, title=self.title, author=self.author
+                )
+        except Exception as e:
+            # Manejar excepciones
+            raise Exception(f"Error al guardar el libro: {e}")
 
     def get(self, book_id):
-        return self.sql.retrieve(table_name="books", record_id=book_id)
+        try:
+            # Verificar la existencia del libro antes de intentar recuperarlo
+            book_data = self.sql.retrieve(table_name="books", record_id=book_id)
+            if book_data:
+                self.id = book_id
+                self.title = book_data["title"]
+                self.author = book_data["author"]
+            else:
+                raise ValueError(f"No se encontró un libro con el ID {book_id}")
+        except Exception as e:
+            raise Exception(f"Error al obtener el libro: {e}")
 
     def update(self):
-        if self.id is not None:
-            self.sql.update(
-                "books", record_id=self.id, title=self.title, author=self.author
-            )
-        else:
-            raise Exception("El libro no tiene un identificador")
+        try:
+            if self.id is not None:
+                # Validar datos antes de interactuar con la base de datos
+                if not self.title or not self.author:
+                    raise ValueError(
+                        "Título y autor son obligatorios para actualizar un libro."
+                    )
+
+                self.sql.update(
+                    "books", record_id=self.id, title=self.title, author=self.author
+                )
+            else:
+                raise ValueError("El libro no tiene un identificador")
+        except Exception as e:
+            raise Exception(f"Error al actualizar el libro: {e}")
 
     def delete(self):
-        if self.id is not None:
-            self.sql.delete(table_name="books", record_id=self.id)
-        else:
-            raise Exception("El libro no tiene un identificador")
+        try:
+            if self.id is not None:
+                self.sql.delete(table_name="books", record_id=self.id)
+            else:
+                raise ValueError("El libro no tiene un identificador")
+        except Exception as e:
+            raise Exception(f"Error al eliminar el libro: {e}")
