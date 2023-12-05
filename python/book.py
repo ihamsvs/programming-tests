@@ -41,3 +41,20 @@ class Book:
             self.sql.update(
                 "books", record_id=self.id, title=self.title, author=self.author
             )
+
+    def get(self, book_id):
+        return self.sql.retrieve(table_name="books", record_id=book_id)
+
+    def update(self):
+        if self.id is not None:
+            self.sql.update(
+                "books", record_id=self.id, title=self.title, author=self.author
+            )
+        else:
+            raise Exception("El libro no tiene un identificador")
+
+    def delete(self):
+        if self.id is not None:
+            self.sql.delete(table_name="books", record_id=self.id)
+        else:
+            raise Exception("El libro no tiene un identificador")
