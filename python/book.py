@@ -1,5 +1,4 @@
 class SQL:
-
     seq = 0
 
     def create(self, table_name="books", *args, **kwargs):
@@ -25,8 +24,20 @@ class SQL:
         print(f"Se elimino {record_id} desde {table_name}")
 
 
-
 class Book:
     """Aquí implementar la clase"""
 
+    def __init__(self, sql, title, author):
+        self.sql = sql
+        self.id = None
+        self.title = title
+        self.author = author
 
+    def save(self):
+        if self.id is None:
+            self.sql.create(table_name="books", title=self.title, author=self.author)
+            self.id = self.sql.last_inserted_id()
+        else:
+            self.sql.update(
+                "books", record_id=self.id, title=self.title, author=self.author
+            )
