@@ -24,12 +24,13 @@ class SQL:
         print(f"Se elimino {record_id} desde {table_name}")
 
 
-def __init__(self, sql, title, author):
-    # inicializar los atributos
-    self.sql = sql
-    self.id = None
-    self.title = title
-    self.author = author
+class Book:
+    def __init__(self, sql, title, author):
+        # inicializar los atributos
+        self.sql = sql
+        self.id = None
+        self.title = title
+        self.author = author
 
     def save(self):
         try:
